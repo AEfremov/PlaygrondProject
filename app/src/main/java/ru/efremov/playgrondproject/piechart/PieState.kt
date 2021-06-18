@@ -1,4 +1,4 @@
-package ru.efremov.playgrondproject
+package ru.efremov.playgrondproject.piechart
 
 // Represents the various PieChart states
 enum class PieState {

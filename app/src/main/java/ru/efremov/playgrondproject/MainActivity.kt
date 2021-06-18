@@ -2,6 +2,8 @@ package ru.efremov.playgrondproject
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import ru.efremov.playgrondproject.piechart.PieChart
+import ru.efremov.playgrondproject.piechart.PieData
 
 
 class MainActivity : AppCompatActivity() {

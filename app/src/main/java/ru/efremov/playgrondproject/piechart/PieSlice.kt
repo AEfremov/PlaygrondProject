@@ -1,4 +1,4 @@
-package ru.efremov.playgrondproject
+package ru.efremov.playgrondproject.piechart
 
 import android.graphics.Paint
 import android.graphics.PointF
