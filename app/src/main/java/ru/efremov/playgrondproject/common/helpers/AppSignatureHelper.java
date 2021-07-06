@@ -1,4 +1,4 @@
-package ru.efremov.playgrondproject.common;
+package ru.efremov.playgrondproject.common.helpers;
 
 import android.content.Context;
 import android.content.ContextWrapper;
