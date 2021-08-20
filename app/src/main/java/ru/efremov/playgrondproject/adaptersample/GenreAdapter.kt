@@ -28,13 +28,16 @@ class GenreAdapter(groups: List<ExpandableGroup<*>>) :
         childIndex: Int
     ) {
         val artist = (group as Genre).items!![childIndex]!!
-        holder!!.setArtistName(artist.name)
+        holder?.setArtistName(artist.name)
     }
 
     override fun onBindGroupViewHolder(
-        holder: GenreViewHolder?, flatPosition: Int,
+        holder: GenreViewHolder?,
+        flatPosition: Int,
         group: ExpandableGroup<*>?
     ) {
-        holder!!.setGenreTitle(group)
+        group?.let {
+            holder?.setGenreTitle(it)
+        }
     }
 }

@@ -4,10 +4,8 @@ import ru.efremov.playgrondproject.expandablerw.viewholder.GroupViewHolder
 import ru.efremov.playgrondproject.expandablerw.model.ExpandableGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.efremov.playgrondproject.expandablerw.model.ExpandableList
-import ru.efremov.playgrondproject.expandablerw.listener.GroupExpandCollapseListener
 import android.view.ViewGroup
-import ru.efremov.playgrondproject.expandablerw.listener.ExpandCollapseListener
-import ru.efremov.playgrondproject.expandablerw.listener.OnGroupClickListener
+import ru.efremov.playgrondproject.expandablerw.listener.*
 import ru.efremov.playgrondproject.expandablerw.model.ExpandableListPosition
 import ru.efremov.playgrondproject.expandablerw.viewholder.ChildViewHolder
 import java.lang.IllegalArgumentException
@@ -16,13 +14,15 @@ import java.lang.IllegalArgumentException
 abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildViewHolder>(groups: List<ExpandableGroup<*>>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     ExpandCollapseListener,
-    OnGroupClickListener
+    OnGroupClickListener,
+    OnChildClickListener
 {
 
     protected var expandableList: ExpandableList = ExpandableList(groups)
     private val expandCollapseController: ExpandCollapseController =
         ExpandCollapseController(expandableList, this)
     private var groupClickListener: OnGroupClickListener? = null
+    private var childDataListener: OnChildDataListener? = null
     private var expandCollapseListener: GroupExpandCollapseListener? = null
 
     /**
@@ -45,7 +45,9 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
                 gvh
             }
             ExpandableListPosition.CHILD -> {
-                onCreateChildViewHolder(parent, viewType)
+                val cvh = onCreateChildViewHolder(parent, viewType)
+                cvh.setOnChildClickListener(this)
+                cvh
             }
             else -> throw IllegalArgumentException("viewType is not valid")
         }
@@ -150,10 +152,21 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
      * @return false if click expanded group, true if click collapsed group
      */
     override fun onGroupClick(flatPos: Int): Boolean {
-        if (groupClickListener != null) {
-            groupClickListener!!.onGroupClick(flatPos)
-        }
+        groupClickListener?.onGroupClick(flatPos)
         return expandCollapseController.toggleGroup(flatPos)
+    }
+
+    /**
+     * Triggered by a click on a [ChildViewHolder]
+     */
+    override fun onChildClick(flatPos: Int) {
+        childDataListener?.let { listener ->
+            val listPos: ExpandableListPosition = expandableList.getUnflattenedPosition(flatPos)
+            val childGroup = expandableList.getExpandableGroup(listPos) as ExpandableGroup
+            val childPos = listPos.childPos
+            val item = childGroup.items!![childPos]
+            listener.obtainChildData(item)
+        }
     }
 
     /**
@@ -190,6 +203,10 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
 
     fun setOnGroupClickListener(listener: OnGroupClickListener?) {
         groupClickListener = listener
+    }
+
+    fun setOnChildDataListener(listener: OnChildDataListener) {
+        childDataListener = listener
     }
 
     fun setOnGroupExpandCollapseListener(listener: GroupExpandCollapseListener?) {
