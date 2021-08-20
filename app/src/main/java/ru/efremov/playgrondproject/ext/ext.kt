@@ -1,4 +1,4 @@
-package ru.efremov.playgrondproject
+package ru.efremov.playgrondproject.ext
 
 import android.view.View
 import ru.efremov.playgrondproject.common.SafeClickListener
